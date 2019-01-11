@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Dictionary</string>
+    <string name="btn_add_word">Add Word</string>
+    <string name="hint_en_word">please enter English word</string>
+    <string name="hint_bg_word">please enter Bulgarian word</string>
+    <string name="tvListWords">Data from the database will be displayed here</string>
+</resources>
