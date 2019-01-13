@@ -7,6 +7,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class DictionaryDB {
 
     public static final String KEY_ROWID = "_id";
@@ -79,6 +83,31 @@ public class DictionaryDB {
 
         c.close();
         return result;
+    }
+
+    public HashMap<String, List<String>> getDataDictionary() {
+        String [] columns = new String [] {KEY_ROWID, KEY_EN_WORD, KEY_BG_WORD};
+        Cursor c = ourDatabase.query(DATABASE_TABLE, columns, null, null, null, null, null);
+
+        int iRowID = c.getColumnIndex(KEY_ROWID);
+        int iEnWord =  c.getColumnIndex(KEY_EN_WORD);
+        int iBgWord =  c.getColumnIndex(KEY_BG_WORD);
+
+        HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+
+            //result = result + c.getString(iRowID) + ": " + c.getString(iEnWord) + " " + c.getString(iBgWord) + "\n";
+            List<String> bgWordArray = new ArrayList<String>();
+
+            bgWordArray.add(c.getString(iBgWord));
+
+            expandableListDetail.put(c.getString(iEnWord), bgWordArray);
+
+        }
+
+        c.close();
+        return expandableListDetail;
     }
 
 }
