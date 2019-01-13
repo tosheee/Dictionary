@@ -6,6 +6,14 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +32,8 @@ public class DictionaryDB {
     private DBHelper ourHelper;
     private final Context ourContext;
     private SQLiteDatabase ourDatabase;
+
+    List<String> result;
 
     public DictionaryDB(Context context) {
         ourContext = context;
@@ -65,24 +75,25 @@ public class DictionaryDB {
         return ourDatabase.insert(DATABASE_TABLE, null, cv);
     }
 
-    public String getData() {
-        String [] columns = new String [] {KEY_ROWID, KEY_EN_WORD, KEY_BG_WORD};
-        Cursor c = ourDatabase.query(DATABASE_TABLE, columns, null, null, null, null, null);
 
-        String result = "";
+    //
+    public void getAndInsertDataFromFireBase(){
 
-        int iRowID = c.getColumnIndex(KEY_ROWID);
-        int iEnWord =  c.getColumnIndex(KEY_EN_WORD);
-        int iBgWord =  c.getColumnIndex(KEY_BG_WORD);
+        final DatabaseReference senderDb = FirebaseDatabase.getInstance().getReference().child("Items");
 
+        senderDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                    //Log.i("Testing", "DATA: "+ childDataSnapshot.child("bg_word").getValue().toString());
+                    createEntry(childDataSnapshot.child("en_word").getValue().toString(), childDataSnapshot.child("bg_word").getValue().toString());
+                }
+            }
 
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-            result = result + c.getString(iRowID) + ": " + c.getString(iEnWord) + " " + c.getString(iBgWord) + "\n";
-        }
-
-        c.close();
-        return result;
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
     }
 
     public HashMap<String, List<String>> getDataDictionary() {
@@ -98,6 +109,7 @@ public class DictionaryDB {
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
 
             //result = result + c.getString(iRowID) + ": " + c.getString(iEnWord) + " " + c.getString(iBgWord) + "\n";
+
             List<String> bgWordArray = new ArrayList<String>();
 
             bgWordArray.add(c.getString(iBgWord));
@@ -110,4 +122,22 @@ public class DictionaryDB {
         return expandableListDetail;
     }
 
+    // method for remove
+    public String getData() {
+        String [] columns = new String [] {KEY_ROWID, KEY_EN_WORD, KEY_BG_WORD};
+        Cursor c = ourDatabase.query(DATABASE_TABLE, columns, null, null, null, null, null);
+
+        String result = "";
+
+        int iRowID = c.getColumnIndex(KEY_ROWID);
+        int iEnWord =  c.getColumnIndex(KEY_EN_WORD);
+        int iBgWord =  c.getColumnIndex(KEY_BG_WORD);
+
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+            result = result + c.getString(iRowID) + ": " + c.getString(iEnWord) + " " + c.getString(iBgWord) + "\n";
+        }
+
+        c.close();
+        return result;
+    }
 }

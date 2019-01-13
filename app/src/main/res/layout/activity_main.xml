@@ -27,5 +27,13 @@
             android:onClick="btnViewListWord"
             android:text="VIEW LIST WORDS" />
 
+        <Button
+            android:id="@+id/btn_update_dictionary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/btn_add_word"
+            android:onClick="btnUpdateDictionary"
+            android:text="Update Dictionary" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
