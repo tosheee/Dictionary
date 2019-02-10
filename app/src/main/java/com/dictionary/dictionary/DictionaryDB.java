@@ -16,8 +16,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class DictionaryDB {
 
@@ -75,8 +80,6 @@ public class DictionaryDB {
         return ourDatabase.insert(DATABASE_TABLE, null, cv);
     }
 
-
-    //
     public void getAndInsertDataFromFireBase(){
 
         final DatabaseReference senderDb = FirebaseDatabase.getInstance().getReference().child("Items");
@@ -96,30 +99,47 @@ public class DictionaryDB {
         });
     }
 
-    public HashMap<String, List<String>> getDataDictionary() {
+    public Map<String, List<String>> getDataDictionary() {
         String [] columns = new String [] {KEY_ROWID, KEY_EN_WORD, KEY_BG_WORD};
         Cursor c = ourDatabase.query(DATABASE_TABLE, columns, null, null, null, null, null);
-
         int iRowID = c.getColumnIndex(KEY_ROWID);
         int iEnWord =  c.getColumnIndex(KEY_EN_WORD);
         int iBgWord =  c.getColumnIndex(KEY_BG_WORD);
+        Map<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+        Map<String, List<String>> map = new TreeMap<String, List<String>>(expandableListDetail);
 
-        HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+        System.out.println("After Sorting:");
+
+        Set set = map.entrySet();
+        Iterator iterator = set.iterator();
 
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-
-            //result = result + c.getString(iRowID) + ": " + c.getString(iEnWord) + " " + c.getString(iBgWord) + "\n";
-
             List<String> bgWordArray = new ArrayList<String>();
-
             bgWordArray.add(c.getString(iBgWord));
-
-            expandableListDetail.put(c.getString(iEnWord), bgWordArray);
-
+            map.put(c.getString(iEnWord), bgWordArray);
         }
 
         c.close();
-        return expandableListDetail;
+        return map;
+    }
+
+    public void deleteAllData(){
+        SQLiteDatabase db = ourHelper.getWritableDatabase(); // helper is object extends SQLiteOpenHelper
+        db.delete(DATABASE_TABLE, null, null);
+    }
+
+    public long deleteEntry(String rowId){
+        return ourDatabase.delete(DATABASE_TABLE, KEY_ROWID + "=?", new String [] {rowId});
+    }
+
+    public long updateEntry(String rowId, String enWord, String bgWord){
+
+        deleteAllData();
+
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_EN_WORD, enWord);
+        cv.put(KEY_BG_WORD, bgWord);
+        return ourDatabase.update(DATABASE_TABLE, cv, KEY_ROWID + "=?", new String []{rowId});
     }
 
     // method for remove

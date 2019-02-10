@@ -28,12 +28,38 @@
             android:text="VIEW LIST WORDS" />
 
         <Button
+            android:id="@+id/btn_edit_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/btn_add_word"
+            android:onClick="btnEditData"
+            android:text="Edit Word" />
+
+        <Button
+            android:id="@+id/btn_delete_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/btn_add_word"
+            android:onClick="btnDeleteData"
+            android:text="Delete Word" />
+
+        <Button
             android:id="@+id/btn_update_dictionary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/btn_add_word"
             android:onClick="btnUpdateDictionary"
             android:text="Update Dictionary" />
+
+
+        <Button
+            android:id="@+id/btn_delete_all_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/btn_add_word"
+            android:onClick="btnDeleteAllData"
+            android:background="#f90404"
+            android:text="Delete ALL DATA" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

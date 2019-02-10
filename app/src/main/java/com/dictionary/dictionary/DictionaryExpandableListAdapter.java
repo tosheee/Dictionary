@@ -2,6 +2,8 @@ package com.dictionary.dictionary;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -14,9 +16,9 @@ public class DictionaryExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private List<String> expandableListTitle;
-    private HashMap<String, List<String>> expandableListDetail;
+    private Map<String, List<String>> expandableListDetail;
 
-    public DictionaryExpandableListAdapter(Context context, List<String> expandableListTitle, HashMap<String, List<String>> expandableListDetail) {
+    public DictionaryExpandableListAdapter(Context context, List<String> expandableListTitle, Map<String, List<String>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
