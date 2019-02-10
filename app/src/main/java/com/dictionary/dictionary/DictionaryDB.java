@@ -105,22 +105,17 @@ public class DictionaryDB {
         int iRowID = c.getColumnIndex(KEY_ROWID);
         int iEnWord =  c.getColumnIndex(KEY_EN_WORD);
         int iBgWord =  c.getColumnIndex(KEY_BG_WORD);
-        Map<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-        Map<String, List<String>> map = new TreeMap<String, List<String>>(expandableListDetail);
 
-        System.out.println("After Sorting:");
-
-        Set set = map.entrySet();
-        Iterator iterator = set.iterator();
+        Map<String, List<String>> expandableListDetail = new TreeMap<String, List<String>>();
 
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
             List<String> bgWordArray = new ArrayList<String>();
             bgWordArray.add(c.getString(iBgWord));
-            map.put(c.getString(iEnWord), bgWordArray);
+            expandableListDetail.put(c.getString(iEnWord), bgWordArray);
         }
 
         c.close();
-        return map;
+        return expandableListDetail;
     }
 
     public void deleteAllData(){
