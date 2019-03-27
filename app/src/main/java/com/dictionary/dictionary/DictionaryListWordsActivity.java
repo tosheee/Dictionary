@@ -1,11 +1,16 @@
 package com.dictionary.dictionary;
 
+import android.content.DialogInterface;
 import android.database.SQLException;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import android.widget.TextView;
@@ -22,6 +27,9 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
     List<String> expandableListTitle;
     Map<String, List<String>> expandableListDetail;
 
+    float historicX = Float.NaN, historicY = Float.NaN;
+    static final int DELTA = 50;
+    enum Direction {LEFT, RIGHT;}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +57,7 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(), expandableListTitle.get(groupPosition) + " List Expanded.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), expandableListTitle.get(groupPosition) + "", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -58,8 +66,7 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
             @Override
             public void onGroupCollapse(int groupPosition)
             {
-                Toast.makeText(getApplicationContext(), expandableListTitle.get(groupPosition) + " List Collapsed.", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(getApplicationContext(), expandableListTitle.get(groupPosition) + "", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -70,5 +77,22 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(expandableListView, new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+            public boolean canDismiss(int position) {
+                return true;
+            }
+
+            @Override
+            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                for (int position : reverseSortedPositions) {
+                    expandableListTitle.remove(position);
+                    //expandableListTitle.notifyDataSetChanged();
+                    //expandableListAdapter.notifyDataSetChanged();
+                }
+            }
+                        });
+        expandableListView.setOnTouchListener(touchListener);
     }
 }
