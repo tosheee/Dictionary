@@ -5,9 +5,11 @@ import android.database.SQLException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DictionaryListWordsActivity extends AppCompatActivity {
 
@@ -30,6 +33,7 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
     float historicX = Float.NaN, historicY = Float.NaN;
     static final int DELTA = 50;
     enum Direction {LEFT, RIGHT;}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,31 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
         expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
         expandableListAdapter = new DictionaryExpandableListAdapter(this, expandableListTitle, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
+
+
+        SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(expandableListView, new SwipeDismissListViewTouchListener.DismissCallbacks() {
+            @Override
+            public boolean canDismiss(int position) {
+                return true;
+            }
+
+            @Override
+            public void onDismiss(ListView view, int[] reverseSortedPositions) {
+                Set<String> keySet = expandableListDetail.keySet();
+
+                ArrayList<String> listOfKeys = new ArrayList<String>(keySet);
+                for (int position : reverseSortedPositions) {
+
+                //for(String key : expandableListDetail.keySet()){
+                  Log.d("ALABALA", "TEST "+ expandableListDetail.get(listOfKeys.get(position)));
+                    //expandableListDetail.get(listOfKeys.get(position)).remove();
+
+                //notifyDataSetChanged();
+                }
+            }
+        });
+
+        expandableListView.setOnTouchListener(touchListener);
 
 
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -78,21 +107,5 @@ public class DictionaryListWordsActivity extends AppCompatActivity {
             }
         });
 
-        SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(expandableListView, new SwipeDismissListViewTouchListener.DismissCallbacks() {
-                            @Override
-            public boolean canDismiss(int position) {
-                return true;
-            }
-
-            @Override
-            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                for (int position : reverseSortedPositions) {
-                    expandableListTitle.remove(position);
-                    //expandableListTitle.notifyDataSetChanged();
-                    //expandableListAdapter.notifyDataSetChanged();
-                }
-            }
-                        });
-        expandableListView.setOnTouchListener(touchListener);
     }
 }
